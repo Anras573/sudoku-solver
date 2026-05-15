@@ -17,4 +17,4 @@ npm run build
 
 ## GitHub Pages Deployment
 
-The app is automatically built and deployed to GitHub Pages via `.github/workflows/deploy.yml` whenever changes are merged to `main`.
+The app is automatically built and deployed to GitHub Pages via `.github/workflows/deploy.yml` on pushes to `main`.
