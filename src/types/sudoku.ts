@@ -11,12 +11,12 @@ export type ValueCell = {
   value: SudokuDigit
 }
 
-export type CandidatesCell = {
+export type CandidateCell = {
   state: 'candidates'
-  values: readonly SudokuDigit[]
+  candidates: readonly SudokuDigit[]
 }
 
-export type Cell = EmptyCell | ValueCell | CandidatesCell
+export type Cell = EmptyCell | ValueCell | CandidateCell
 
 export type Block = Nine<Cell>
 export type Row = Nine<Cell>
