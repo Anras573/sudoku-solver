@@ -1,6 +1,6 @@
 export type SudokuDigit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
-type Nine<T> = readonly [T, T, T, T, T, T, T, T, T]
+export type Nine<T> = readonly [T, T, T, T, T, T, T, T, T]
 
 export type EmptyCell = {
   state: 'empty'
