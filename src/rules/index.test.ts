@@ -8,6 +8,7 @@ import {
 } from './index'
 import type {
   Board,
+  CandidateList,
   Cell,
   Row,
 } from '../types/sudoku'
@@ -22,8 +23,8 @@ function value(v: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9): Cell {
   return { state: 'value', value: v }
 }
 
-function candidates(...vals: [1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, ...(1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)[]]): Cell {
-  return { state: 'candidates', candidates: vals as Cell extends { state: 'candidates'; candidates: infer C } ? C : never }
+function candidates(list: CandidateList): Cell {
+  return { state: 'candidates', candidates: list }
 }
 
 /** Build a Nine<Cell> row from exactly 9 cells. */
@@ -33,12 +34,15 @@ function row(...cells: [Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell, Cell]): 
 
 const emptyRow = row(empty, empty, empty, empty, empty, empty, empty, empty, empty)
 
+const ROW_INDICES = [0, 1, 2, 3, 4, 5, 6, 7, 8] as const
+type RowIndex = (typeof ROW_INDICES)[number]
+
 /**
  * Build a Board from an array of up to 9 rows.
  * Any unspecified rows default to emptyRow.
  */
-function makeBoard(overrides: Partial<Record<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, Row>> = {}): Board {
-  const rows: Row[] = [0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => overrides[i as 0] ?? emptyRow)
+function makeBoard(overrides: Partial<Record<RowIndex, Row>> = {}): Board {
+  const rows: Row[] = ROW_INDICES.map((i) => overrides[i] ?? emptyRow)
   return rows as unknown as Board
 }
 
@@ -72,7 +76,7 @@ describe('isValidGroup', () => {
   it('ignores candidate cells when checking for duplicates', () => {
     // Both value(5) and candidates(5) – the candidate should NOT count.
     const group = row(
-      value(5), candidates(5), empty,
+      value(5), candidates([5]), empty,
       empty, empty, empty,
       empty, empty, empty,
     )
@@ -81,7 +85,7 @@ describe('isValidGroup', () => {
 
   it('returns false when two value cells share the same digit (ignoring candidates)', () => {
     const group = row(
-      value(3), candidates(3), value(3),
+      value(3), candidates([3]), value(3),
       empty, empty, empty,
       empty, empty, empty,
     )
@@ -90,9 +94,9 @@ describe('isValidGroup', () => {
 
   it('returns true for a group with only candidate cells', () => {
     const group = row(
-      candidates(1), candidates(2), candidates(3),
-      candidates(4), candidates(5), candidates(6),
-      candidates(7), candidates(8), candidates(9),
+      candidates([1]), candidates([2]), candidates([3]),
+      candidates([4]), candidates([5]), candidates([6]),
+      candidates([7]), candidates([8]), candidates([9]),
     )
     expect(isValidGroup(group)).toBe(true)
   })
@@ -144,7 +148,7 @@ describe('isValidBoard – column validation', () => {
     // Column 0 has value(4) in row 0 and candidates(4) in row 1 – should be valid.
     const board = makeBoard({
       0: row(value(4), empty, empty, empty, empty, empty, empty, empty, empty),
-      1: row(candidates(4), empty, empty, empty, empty, empty, empty, empty, empty),
+      1: row(candidates([4]), empty, empty, empty, empty, empty, empty, empty, empty),
     })
     expect(isValidBoard(board)).toBe(true)
   })
@@ -177,7 +181,7 @@ describe('isValidBoard – block validation', () => {
   it('does not count candidate cells in block validation', () => {
     // Top-left block: value(9) at (0,0) and candidates(9) at (0,1) – should be valid.
     const board = makeBoard({
-      0: row(value(9), candidates(9), empty, empty, empty, empty, empty, empty, empty),
+      0: row(value(9), candidates([9]), empty, empty, empty, empty, empty, empty, empty),
     })
     expect(isValidBoard(board)).toBe(true)
   })
