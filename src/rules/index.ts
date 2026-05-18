@@ -84,9 +84,14 @@ function getPresentValues(group: Group): Set<SudokuDigit> {
   return seen
 }
 
+function isCandidateList(values: readonly SudokuDigit[]): values is CandidateList {
+  return values.length >= 1 && values.length <= 9
+}
+
 function toCellWithCandidates(candidates: readonly SudokuDigit[]): Cell {
   if (candidates.length === 0) return { state: 'empty' }
-  return { state: 'candidates', candidates: candidates as CandidateList }
+  if (!isCandidateList(candidates)) return { state: 'empty' }
+  return { state: 'candidates', candidates }
 }
 
 /**
@@ -133,5 +138,6 @@ export function calculateCandidates(board: Board): Board {
     }),
   )
 
+  // Safe cast: `withoutColumnValues` is built from 9x9 index tuples and each entry is a valid Cell.
   return withoutColumnValues as unknown as Board
 }
