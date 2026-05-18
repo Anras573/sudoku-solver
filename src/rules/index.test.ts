@@ -5,6 +5,7 @@ import {
   getRows,
   getColumns,
   getBlocks,
+  calculateCandidates,
 } from './index'
 import type {
   Board,
@@ -236,5 +237,36 @@ describe('getBlocks', () => {
       value(4), value(5), value(6),
       value(7), value(8), value(9),
     ])
+  })
+})
+
+// ---------------------------------------------------------------------------
+// calculateCandidates
+// ---------------------------------------------------------------------------
+
+describe('calculateCandidates', () => {
+  it('keeps value cells unchanged', () => {
+    const board = makeBoard({
+      0: row(value(1), empty, empty, empty, empty, empty, empty, empty, empty),
+    })
+
+    const result = calculateCandidates(board)
+    expect(result[0][0]).toEqual(value(1))
+  })
+
+  it('calculates candidates using block, then row, then column elimination', () => {
+    const board = makeBoard({
+      0: row(value(1), value(2), value(3), empty, empty, empty, empty, empty, empty),
+      1: row(empty, empty, empty, value(4), empty, empty, empty, empty, empty),
+      2: row(value(7), value(8), value(9), empty, empty, empty, empty, empty, empty),
+      4: row(empty, value(5), empty, empty, empty, empty, empty, empty, empty),
+    })
+
+    const result = calculateCandidates(board)
+
+    // (1,1): block missing {4,5,6} -> remove row value 4 -> remove column value 5 => {6}
+    expect(result[1][1]).toEqual(candidates([6]))
+    // (1,0): block missing {4,5,6} -> remove row value 4 => {5,6}; column has no 5/6 values
+    expect(result[1][0]).toEqual(candidates([5, 6]))
   })
 })
