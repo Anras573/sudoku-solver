@@ -269,4 +269,15 @@ describe('calculateCandidates', () => {
     // (1,0): block missing {4,5,6} -> remove row value 4 => {5,6}; column has no 5/6 values
     expect(result[1][0]).toEqual(candidates([5, 6]))
   })
+
+  it('returns empty when row or column elimination removes every block candidate', () => {
+    const board = makeBoard({
+      0: row(value(1), value(2), value(3), empty, empty, empty, empty, empty, empty),
+      1: row(value(4), empty, value(5), value(9), empty, empty, empty, empty, empty),
+      2: row(value(6), value(7), value(8), empty, empty, empty, empty, empty, empty),
+    })
+
+    const result = calculateCandidates(board)
+    expect(result[1][1]).toEqual(empty)
+  })
 })
