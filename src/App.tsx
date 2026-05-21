@@ -34,7 +34,7 @@ function CellDisplay({ cell }: { cell: Cell }) {
     }
     default: {
       const exhaustiveCheck: never = cell
-      throw new Error(`Unhandled cell state: ${exhaustiveCheck}`)
+      throw new Error(`Unhandled cell state: ${JSON.stringify(exhaustiveCheck)}`)
     }
   }
 }
