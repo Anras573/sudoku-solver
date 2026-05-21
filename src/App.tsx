@@ -1,141 +1,41 @@
 import './App.css'
-import type { Cell, Board } from './types/sudoku'
+import type { Cell } from './types/sudoku'
 import { calculateCandidates } from './rules'
-
-// Sample puzzle with all digits 1-9
-const samplePuzzle: Board = [
-  [
-    { state: 'value', value: 1 },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'value', value: 2 },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'value', value: 3 },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'value', value: 4 },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'value', value: 5 },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'value', value: 6 },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'value', value: 7 },
-    { state: 'empty' },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'value', value: 8 },
-    { state: 'empty' },
-  ],
-  [
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'empty' },
-    { state: 'value', value: 9 },
-  ],
-] as const
+import { samplePuzzle } from './fixtures/puzzles'
 
 // Auto-calculate candidates from the puzzle
 const boardWithCandidates = calculateCandidates(samplePuzzle)
 
 function CellDisplay({ cell }: { cell: Cell }) {
-  if (cell.state === 'empty') {
-    return null
-  }
+  switch (cell.state) {
+    case 'empty':
+      return null
+    case 'value':
+      return <div className="cell-value">{cell.value}</div>
+    case 'candidates': {
+      const candidates = cell.candidates
+      const line1 = candidates.filter((c) => c >= 1 && c <= 3)
+      const line2 = candidates.filter((c) => c >= 4 && c <= 6)
+      const line3 = candidates.filter((c) => c >= 7 && c <= 9)
 
-  if (cell.state === 'value') {
-    return <div className="cell-value">{cell.value}</div>
-  }
-
-  if (cell.state === 'candidates') {
-    const candidates = cell.candidates
-    const line1 = candidates.filter((c) => c >= 1 && c <= 3)
-    const line2 = candidates.filter((c) => c >= 4 && c <= 6)
-    const line3 = candidates.filter((c) => c >= 7 && c <= 9)
-
-    return (
-      <div className="cell-candidates">
-        <div className="candidates-line">
-          {line1.map((digit) => <span key={digit}>{digit}</span>)}
+      return (
+        <div className="cell-candidates">
+          <div className="candidates-line">
+            {line1.map((digit) => <span key={digit}>{digit}</span>)}
+          </div>
+          <div className="candidates-line">
+            {line2.map((digit) => <span key={digit}>{digit}</span>)}
+          </div>
+          <div className="candidates-line">
+            {line3.map((digit) => <span key={digit}>{digit}</span>)}
+          </div>
         </div>
-        <div className="candidates-line">
-          {line2.map((digit) => <span key={digit}>{digit}</span>)}
-        </div>
-        <div className="candidates-line">
-          {line3.map((digit) => <span key={digit}>{digit}</span>)}
-        </div>
-      </div>
-    )
+      )
+    }
+    default: {
+      const exhaustiveCheck: never = cell
+      throw new Error(`Unhandled cell state: ${exhaustiveCheck}`)
+    }
   }
 }
 
