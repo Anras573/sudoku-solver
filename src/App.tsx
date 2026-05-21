@@ -106,7 +106,7 @@ const samplePuzzle: Board = [
 ] as const
 
 // Auto-calculate candidates from the puzzle
-const boardWithCandidates = calculateCandidates(samplePuzzle as unknown as Board)
+const boardWithCandidates = calculateCandidates(samplePuzzle)
 
 function CellDisplay({ cell }: { cell: Cell }) {
   if (cell.state === 'empty') {
