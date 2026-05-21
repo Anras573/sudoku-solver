@@ -125,9 +125,15 @@ function CellDisplay({ cell }: { cell: Cell }) {
 
     return (
       <div className="cell-candidates">
-        <div className="candidates-line">{line1.join('')}</div>
-        <div className="candidates-line">{line2.join('')}</div>
-        <div className="candidates-line">{line3.join('')}</div>
+        <div className="candidates-line">
+          {line1.map((digit) => <span key={digit}>{digit}</span>)}
+        </div>
+        <div className="candidates-line">
+          {line2.map((digit) => <span key={digit}>{digit}</span>)}
+        </div>
+        <div className="candidates-line">
+          {line3.map((digit) => <span key={digit}>{digit}</span>)}
+        </div>
       </div>
     )
   }
