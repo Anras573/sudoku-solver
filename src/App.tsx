@@ -1,12 +1,13 @@
 import './App.css'
-import type { Cell } from './types/sudoku'
+import type { Cell, Board } from './types/sudoku'
+import { calculateCandidates } from './rules'
 
-// Sample board for demonstration
-const sampleBoard: readonly (readonly Cell[])[] = [
+// Sample puzzle with only values
+const samplePuzzle: Board = [
   [
     { state: 'value', value: 5 },
-    { state: 'candidates', candidates: [1, 2, 3] },
-    { state: 'candidates', candidates: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+    { state: 'empty' },
+    { state: 'empty' },
     { state: 'empty' },
     { state: 'empty' },
     { state: 'empty' },
@@ -104,6 +105,9 @@ const sampleBoard: readonly (readonly Cell[])[] = [
   ],
 ] as const
 
+// Auto-calculate candidates from the puzzle
+const boardWithCandidates = calculateCandidates(samplePuzzle as unknown as Board)
+
 function CellDisplay({ cell }: { cell: Cell }) {
   if (cell.state === 'empty') {
     return null
@@ -130,7 +134,7 @@ function CellDisplay({ cell }: { cell: Cell }) {
 }
 
 function App() {
-  const cells = sampleBoard.flat()
+  const cells = boardWithCandidates.flat()
 
   return (
     <main className="app">
